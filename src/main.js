@@ -1,33 +1,22 @@
-import crypto from "crypto";
-
-export default async (context) => {
-  const { req, res } = context;
-
+export default async ({ req, res }) => {
   try {
-    const raw = req.body;
-
-    if (!raw) {
-      return res.json({ error: "Empty body" }, 400);
-    }
-
-    const data = typeof raw === "string" ? JSON.parse(raw) : raw;
-    const phone = data.phone;
-
-    if (!phone) {
-      return res.json({ error: "Phone missing" }, 400);
-    }
-
+    // Request body سے فون نمبر نکالیں
+    const { phone } = JSON.parse(req.body);
+    
+    // 6-digit OTP generate
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const token = crypto.randomUUID();
-
-    console.log("OTP:", otp, "Phone:", phone);
-
+    const token = self.crypto.randomUUID(); // Unique token for verification
+    
+    // Log for debugging
+    console.log(`Sending OTP ${otp} to ${phone}`);
+    
+    // جواب واپس کریں
     return res.json({
       token: token,
-      otp: otp
+      otp: otp // صرف ٹیسٹ کے لیے — حقیقی ایپ میں یہ نہیں بھیجنا
     });
-
-  } catch (e) {
-    return res.json({ error: e.message }, 500);
+    
+  } catch (error) {
+    return res.json({ error: error.message }, 500);
   }
 };
