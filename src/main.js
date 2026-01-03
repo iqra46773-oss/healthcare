@@ -4,7 +4,7 @@ export default async ({ req, res }) => {
     
     // 6-digit OTP generate
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const token = crypto.randomUUID(); // Unique token for verification
+    const token = self.crypto.randomUUID(); // ✅ self.crypto.randomUUID()
     
     // Log for debugging
     console.log(`Sending OTP ${otp} to ${phone}`);
