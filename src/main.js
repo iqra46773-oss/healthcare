@@ -1,25 +1,33 @@
 import crypto from "crypto";
 
-export default async ({ req, res }) => {
+export default async (context) => {
+  const { req, res } = context;
+
   try {
-    const body = JSON.parse(req.body || "{}");
-    const phone = body.phone;
+    const raw = req.body;
+
+    if (!raw) {
+      return res.json({ error: "Empty body" }, 400);
+    }
+
+    const data = typeof raw === "string" ? JSON.parse(raw) : raw;
+    const phone = data.phone;
 
     if (!phone) {
-      return res.json({ error: "Phone is required" }, 400);
+      return res.json({ error: "Phone missing" }, 400);
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const token = crypto.randomUUID();
 
-    console.log("Sending OTP", otp, "to", phone);
+    console.log("OTP:", otp, "Phone:", phone);
 
     return res.json({
-      token,
-      otp // REMOVE in production
+      token: token,
+      otp: otp
     });
 
-  } catch (error) {
-    return res.json({ error: error.message }, 500);
+  } catch (e) {
+    return res.json({ error: e.message }, 500);
   }
 };
